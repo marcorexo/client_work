@@ -17,9 +17,10 @@ generate-folder-name: func [base-folder] [
     current-date-time: now
     ; Extract date and time components
     date-part: current-date-time/date
-    time-part: current-date-time/time
+    time-part: to-string current-date-time/time
+    time-part: replace/all time-part ":" "-"
 
-    return join base-folder ["-" name-no-spaces "-" date-part "-" time-part]
+    return join base-folder [name-no-spaces "-" date-part "-" time-part]
 ]
 
 ; Function to check if the canvas has a signature
