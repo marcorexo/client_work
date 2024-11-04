@@ -13,15 +13,13 @@ completed-text-fields?: func [fullName address telephone] [
 generate-folder-name: func [base-folder] [
     ; Remove spaces from full name
     name-no-spaces: replace/all fullName/text " " ""
-    ; Function to pad numbers with zero if needed
-    pad-zero: func [n][either n < 10 ["0" to-string n][to-string n]]
     ; Get current date and time
-     current-date-time: now
-    ; Extract date components
+    current-date-time: now
+    ; Extract date and time components
     date-part: current-date-time/date
     time-part: current-date-time/time
 
-    return join name-no-spaces ["-" date-part "-" time-part]
+    return join base-folder ["-" name-no-spaces "-" date-part "-" time-part]
 ]
 
 ; Function to check if the canvas has a signature
@@ -33,17 +31,16 @@ has-signature: func [] [
     ]
 ]
 
-save-image-file: func [base-folder] [
-    image-file: join base-folder %/signature.png
+save-image-file: func [folder-name] [
+    image-file: join folder-name %/signature.png
     save/png image-file to-image layout [
         origin 0x0
         box black 600x200 effect scrn/effect ; Use `scrn/effect` directly
     ]
 ]
 
-
-save-data-file: func [base-folder] [
-    text-file: join base-folder %/details.txt
+save-data-file: func [folder-name] [
+    text-file: join folder-name %/details.txt
     write text-file reform [
         "Full name: " fullName/text newline
         "Address: " address/text newline
@@ -77,10 +74,10 @@ view layout [
                 base-folder: request-dir
                 either all [base-folder not none? base-folder] [
                     folder-name: generate-folder-name base-folder
-                    print folder-name  ; Or save the file as needed
+                    print folder-name
                     make-dir/deep folder-name
-                    save-image-file base-folder
-                    save-data-file base-folder
+                    save-image-file folder-name
+                    save-data-file folder-name
                 ][
                     alert "No folder was selected. Please select a folder to save."
                 ]
@@ -92,6 +89,3 @@ view layout [
         btn "Clear" [scrn/effect/draw: copy [line] show scrn]
     return
 ]
-
-
-
